@@ -16,8 +16,14 @@
 <body>
  
 
-  <svg height="250" width="250" style="background: black"></svg>
+  <svg id="demo" height="500" width="500" style="background: black"></svg>
+  
+  <!-- Trying to create trinagles -->
+  <svg id="mainSvg" height="500" width="500" style="background: black"></svg>
 
+
+  <!-- button for code to work -->
+  <button onclick="myFunction()">Execute</button>
 
   <!-- This block will be automatically filled with syntax-highlighted code from the script below -->
   <h5>Code for today:</h5>
@@ -25,12 +31,44 @@
     <code id="display" class="hljs javascript">
     </code>
   </pre>
+ 
+
 
   <!--- Code for today's class --->
   <script id="notes">
+  
+    // Tried to make a trinagle 
+    
+    function createTriangle(x1,y1,x2,y2,x3,y3,fillcolor,strokecolor,stroke){
+      var triangle = new Object();
+      triangle.x1 = x1;
+      triangle.x2 = x2;
+      triangle.x3 = x3;
+      triangle.y1 = y1;
+      triangle.y2 = y2;
+      triangle.y3 = y3;
+      triangle.fillcolor=fillcolor;
+      triangle.strokecolor=strokecolor;
+      triangle.stroke= stroke;
+      triangle.draw=function() {
+        draw.triangle(this.x1, this.y1, this.x2, this.y2, this.x3
+        ,this.y3,this.fillcolor, this.strokecolor, this.stroke);
+      }
+      return triangle;
+    }
+    var triangle = createTriangle(100,100,300,120,180,350,'red','black',6);
+    triangle.draw();
 
+
+
+
+
+
+  //function for the button to allow the code to run 
+  document.getElementById("demo").onclick = function() {myFunction()};
 
   // 2. How can we create new elements, and set their attributes and styles?
+  function myFunction() {
   let svg = d3.select("svg");
 
 
@@ -42,13 +80,14 @@
   
   // C style loop
   for (let i = 0; i < 100; i++) {
-    svg.append("circle")
-      .attr("r", 10)
+    svg.append("polyline")
+      .attr("r", 70)
       .attr("cx", randomPixel() )
       .attr("cy", randomPixel() )
       .attr("fill","red");
   }
   
+
   // JS style loop
   let colors = ["teal","silver","green","purple","brown"];
   colors.forEach( (d, i) => {
@@ -56,7 +95,7 @@
     // i = the position in the array
     console.log(d,i);
     
-    let rad = 4 + Math.random() * 20;
+    let rad = 4 + Math.random() * 40;
     
     svg.append("circle")
       .attr("r", rad)
@@ -69,6 +108,7 @@
 
 
   // 4. How do we update the attributes of existing elements?
+  
   d3.selectAll("circle")
     .transition().delay(1000).duration(500)
     .style("fill","orange");
@@ -81,7 +121,7 @@
     .transition().delay(2100).duration(500)
     .attr("cx", randomPixel );
 
-
+  }
   </script>
 
 
