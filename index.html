@@ -30,16 +30,18 @@
   <script id="notes">
   var height = 500;
   var width = 500;
+  var radius = 5;
   var dataset = [];
 
   // 2. How can we create new elements, and set their attributes and styles?
   var svg = d3.select("svg").attr("height", height).attr("width", width);
 
   // We're passing in a function in d3.max to tell it what we're maxing (x value)
-  var xScale = d3.scaleLinear().domain([0, 100]).range([0,100]); 
+  var xScale = d3.scaleLinear().domain([0, width]).range([0,width]); 
 
   // We're passing in a function in d3.max to tell it what we're maxing (y value)
-  var yScale = d3.scaleLinear().domain([0, 100]).range([0,100]);
+  var yScale = d3.scaleLinear().domain([0, height]).range([0,height]);
+
 
   // On Click, we want to add data to the array and chart
   svg.on("click", function() {
@@ -50,6 +52,7 @@
         x: Math.round( xScale.invert(coords[0])),  // Takes the pixel number to convert to number
         y: Math.round( yScale.invert(coords[1]))
       };
+
       dataset.push(newData);   // Push data to our array
       console.log(dataset);
 
@@ -58,9 +61,11 @@
           .data(dataset)
           .enter()
           .append("circle")
-          .attr("r", 10)
+          .attr("cx", function(d) {return d.x;})
+          .attr("cy", function(d) {return d.y;})
           .attr("fill", "red")
-      })
+          .attr("r", radius);
+  });
   
 
 
