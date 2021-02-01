@@ -36,6 +36,7 @@
 
   <!--- Code for today's class --->
   <script id="notes">
+<<<<<<< HEAD
   
     // Tried to make a trinagle 
     
@@ -61,6 +62,11 @@
 
 
 
+=======
+  var height = 500;
+  var width = 500;
+  var dataset = [];
+>>>>>>> 27927749090070a12f86218ed3434a5c1d482786
 
 
 
@@ -68,6 +74,7 @@
   document.getElementById("demo").onclick = function() {myFunction()};
 
   // 2. How can we create new elements, and set their attributes and styles?
+<<<<<<< HEAD
   function myFunction() {
   let svg = d3.select("svg");
 
@@ -120,6 +127,37 @@
   d3.selectAll("circle")
     .transition().delay(2100).duration(500)
     .attr("cx", randomPixel );
+=======
+  var svg = d3.select("svg").attr("height", height).attr("width", width);
+
+  // We're passing in a function in d3.max to tell it what we're maxing (x value)
+  var xScale = d3.scaleLinear().domain([0, 100]).range([0,100]); 
+
+  // We're passing in a function in d3.max to tell it what we're maxing (y value)
+  var yScale = d3.scaleLinear().domain([0, 100]).range([0,100]);
+
+  // On Click, we want to add data to the array and chart
+  svg.on("click", function() {
+      var coords = d3.mouse(this);
+
+      // Normally we go from data to pixels, but here we're doing pixels to data
+      let newData= {
+        x: Math.round( xScale.invert(coords[0])),  // Takes the pixel number to convert to number
+        y: Math.round( yScale.invert(coords[1]))
+      };
+      dataset.push(newData);   // Push data to our array
+      console.log(dataset);
+
+
+      svg.selectAll("circle")  // For new circle, go through the update process
+          .data(dataset)
+          .enter()
+          .append("circle")
+          .attr("r", 10)
+          .attr("fill", "red")
+      })
+  
+>>>>>>> 27927749090070a12f86218ed3434a5c1d482786
 
   }
   </script>
