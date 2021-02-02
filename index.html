@@ -10,21 +10,14 @@
 
     <script src="js/highlight.min.js"></script>
     <script src="js/d3.v5.min.js"></script>
-
-
 </head>
 <body>
- 
 
   <svg height="250" width="250" style="background: black"></svg>
 
-
   <!-- This block will be automatically filled with syntax-highlighted code from the script below -->
   <h5>Code for today:</h5>
-  <pre>
-    <code id="display" class="hljs javascript">
-    </code>
-  </pre>
+  <pre><code id="display" class="hljs javascript"></code></pre>
 
   <!--- Code for today's class --->
   <script id="notes">
@@ -41,22 +34,18 @@
 
   // We're passing in a function in d3.max to tell it what we're maxing (y value)
   var yScale = d3.scaleLinear().domain([0, height]).range([0,height]);
+    
 
-
-  // On Click, we want to add data to the array and chart
-  svg.on("click", function() {
-      var coords = d3.mouse(this);
-
-      // Normally we go from data to pixels, but here we're doing pixels to data
+  
+  var dragHandler = d3.drag()
+    .on("start", function(){
+      console.log("start")
+      let coords = d3.mouse(this);
       let newData= {
         x: Math.round( xScale.invert(coords[0])),  // Takes the pixel number to convert to number
         y: Math.round( yScale.invert(coords[1]))
       };
-
       dataset.push(newData);   // Push data to our array
-      console.log(dataset);
-
-
       svg.selectAll("circle")  // For new circle, go through the update process
           .data(dataset)
           .enter()
@@ -65,7 +54,36 @@
           .attr("cy", function(d) {return d.y;})
           .attr("fill", "red")
           .attr("r", radius);
-  });
+    })
+    .on("drag", function () {
+      console.log("drag")
+      let coords = d3.mouse(this);
+      let delx = dataset[dataset.length-1].x - coords[0];
+      let dely = dataset[dataset.length-1].y - coords[1];
+      
+      if (delx*delx+dely*dely > 2500){  // radius**2
+        let newData= {
+        x: Math.round( xScale.invert(coords[0])),  
+        y: Math.round( yScale.invert(coords[1]))
+        };
+        dataset.push(newData);   // Push data to our array
+        svg.selectAll("circle")  // For new circle, go through the update process
+          .data(dataset)
+          .enter()
+          .append("circle")
+          .attr("cx", function(d) {return d.x;})
+          .attr("cy", function(d) {return d.y;})
+          .attr("fill", "red")
+          .attr("r", radius);
+      }
+
+    })
+    .on("end", function(){
+      console.log("end")
+      // TODO: calculate a way to web the dots.
+    });
+
+  dragHandler(svg);
   
 
 
