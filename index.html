@@ -1,5 +1,4 @@
 <html>
-
   <head>
     <title>Triangles</title>
 
@@ -13,7 +12,7 @@
 </head>
 <body>
 
-  <svg height="250" width="250" style="background: black"></svg>
+  <svg height="500" width="500" style="background: black"></svg>
 
   <!-- This block will be automatically filled with syntax-highlighted code from the script below -->
   <h5>Code for today:</h5>
@@ -23,8 +22,10 @@
   <script id="notes">
   var height = 500;
   var width = 500;
-  var radius = 5;
-  var dataset = [];
+  var radius = 50;
+  var pts = [];
+  var diags = [];
+
 
   // 2. How can we create new elements, and set their attributes and styles?
   var svg = d3.select("svg").attr("height", height).attr("width", width);
@@ -35,25 +36,25 @@
   // We're passing in a function in d3.max to tell it what we're maxing (y value)
   var yScale = d3.scaleLinear().domain([0, height]).range([0,height]);
     
-
-  
   var dragHandler = d3.drag()
     .on("start", function(){
       console.log("start")
       let coords = d3.mouse(this);
-      let newData= {
+      
+      let pt= {
         x: Math.round( xScale.invert(coords[0])),  // Takes the pixel number to convert to number
         y: Math.round( yScale.invert(coords[1]))
       };
-      dataset.push(newData);   // Push data to our array
+      pts.push(pt);   // Push data to our array
       svg.selectAll("circle")  // For new circle, go through the update process
-          .data(dataset)
+          .data(pts)
           .enter()
           .append("circle")
           .attr("cx", function(d) {return d.x;})
           .attr("cy", function(d) {return d.y;})
           .attr("fill", "red")
-          .attr("r", radius);
+          .attr("r", 5);
+
     })
     .on("drag", function () {
       console.log("drag")
@@ -61,26 +62,40 @@
       let delx = dataset[dataset.length-1].x - coords[0];
       let dely = dataset[dataset.length-1].y - coords[1];
       
-      if (delx*delx+dely*dely > 2500){  // radius**2
-        let newData= {
+      if (delx*delx+dely*dely > radius*radius){  // radius**2
+        
+        let newDptata= {
         x: Math.round( xScale.invert(coords[0])),  
         y: Math.round( yScale.invert(coords[1]))
         };
-        dataset.push(newData);   // Push data to our array
+
+        pts.push(pt);   // Push data to our array
+
         svg.selectAll("circle")  // For new circle, go through the update process
-          .data(dataset)
+          .data(pts)
           .enter()
           .append("circle")
           .attr("cx", function(d) {return d.x;})
           .attr("cy", function(d) {return d.y;})
           .attr("fill", "red")
-          .attr("r", radius);
+          .attr("r", 5);
       }
 
     })
     .on("end", function(){
       console.log("end")
-      // TODO: calculate a way to web the dots.
+      // Input: A simple polygon with n vertices v0, v1, v2, ... , vn-1 stored in a list L. 
+      // Output: A set of n-3 diagonals that triangulate the polygon 
+      let array = pts.slice();
+      while (array.length > 3){
+        array.forEach(function(elem, idx){
+          v_previous = 
+          if (idx == 0){
+
+          }
+        });
+      }
+
     });
 
   dragHandler(svg);
