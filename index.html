@@ -24,7 +24,7 @@
   var width = 500;
   var radius = 50;
   var pts = [];
-  var diags = [];
+  
 
 
   // 2. How can we create new elements, and set their attributes and styles?
@@ -45,7 +45,9 @@
         x: Math.round( xScale.invert(coords[0])),  // Takes the pixel number to convert to number
         y: Math.round( yScale.invert(coords[1]))
       };
+
       pts.push(pt);   // Push data to our array
+      
       svg.selectAll("circle")  // For new circle, go through the update process
           .data(pts)
           .enter()
@@ -59,14 +61,14 @@
     .on("drag", function () {
       console.log("drag")
       let coords = d3.mouse(this);
-      let delx = dataset[dataset.length-1].x - coords[0];
-      let dely = dataset[dataset.length-1].y - coords[1];
+      let delx = pts[pts.length-1].x - coords[0];
+      let dely = pts[pts.length-1].y - coords[1];
       
       if (delx*delx+dely*dely > radius*radius){  // radius**2
         
-        let newDptata= {
-        x: Math.round( xScale.invert(coords[0])),  
-        y: Math.round( yScale.invert(coords[1]))
+        let pt = {
+	        x: Math.round( xScale.invert(coords[0])),  
+	        y: Math.round( yScale.invert(coords[1]))
         };
 
         pts.push(pt);   // Push data to our array
@@ -83,20 +85,27 @@
 
     })
     .on("end", function(){
-      console.log("end")
+      console.log("end");
       // Input: A simple polygon with n vertices v0, v1, v2, ... , vn-1 stored in a list L. 
       // Output: A set of n-3 diagonals that triangulate the polygon 
       let array = pts.slice();
+      let diags = [];
       while (array.length > 3){
-        array.forEach(function(elem, idx){
-          v_previous = 
-          if (idx == 0){
+      		array.forEach(function(elem, idx){
+          
+	          if (idx == 0){
+	          	// do nothing
+	          	//  or calculate the list of edges
+	          }else{
+	          	// check if a valid triangle
+	          	proposed_diag = [array[idx-1], array[idx+1]];
 
-          }
+	          }
         });
       }
 
     });
+	
 
   dragHandler(svg);
   
