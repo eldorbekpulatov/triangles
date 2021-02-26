@@ -108,24 +108,25 @@
 			// TODO: Locate an ear vi-1, vi, vi+1
       		for(let pt_idx = 0; pt_idx<array.length; pt_idx++){
           
-	          if (pt_idx == 0){
-	          	// do nothing
-	          	//  or calculate the list of edges
-	          }else if(pt_idx <array.length-1){
-	          	// check if a valid triangle
-	          	proposed_diag = [array[pt_idx-1], array[pt_idx+1]];
+				if (pt_idx == 0){
+					// do nothing
+					//  or calculate the list of edges
+				}else if(pt_idx <array.length-1){
+					// check if a valid triangle
+					proposed_diag = [array[pt_idx-1], array[pt_idx+1]];
 
-				if(doesnt_intersect_any_edge(proposed_diag)){
-					edges.push(proposed_diag);
-					break;
-				}
-				
-	          }else{
-				
-			  };
-			
+					
+					if(doesnt_intersect_any_edge(proposed_diag)){
+						// TODO:  Add diagonal (vi-1, vi+1) to D
+						edges.push(proposed_diag);
+						
+						// TODO: Remove vi from L.
+						array.splice(pt_idx, 1)
+						break;
+					};
+				};
 			};
-			break;
+			
 		};
 
     });
