@@ -24,8 +24,9 @@
 	var radius = 50;
 	var pts = [];
 	var edges = [];
+	var diags = [];
   
-	function doesnt_intersect_any_edge(proposed_diag){
+	function doesnt_intersect_any_edge(proposed_diag, list_of_edges){
 		function ccw(A,B,C){
 			return (C.y-A.y) * (B.x-A.x) > (B.y-A.y) * (C.x-A.x);
 		};
@@ -34,7 +35,7 @@
 			return ccw(A,C,D) != ccw(B,C,D) & ccw(A,B,C) != ccw(A,B,D);
 		};
 		
-		edges.forEach(function(edge, edge_idx){
+		list_of_edges.forEach(function(edge, edge_idx){
 			if(intersects(edge[0],edge[1], proposed_diag[0],proposed_diag[1])){
 				return false;
 			};
@@ -42,21 +43,7 @@
 		return true; 
 	};
 	
-	function update_canvas(coords){
-		let pt= {
-			x: Math.round( coords[0]),
-			y: Math.round( coords[1])
-		};
-		pts.push(pt);
-		
-		
-		if(pts.length>1){
-			let edge = [pts[pts.length-1],
-						pts[pts.length-2]];
-			edges.push(edge);
-		};
-
-
+	function update_canvas(){
 		svg.selectAll("circle")
 			.data(pts)
 			.enter()
@@ -76,6 +63,17 @@
 			.attr("y1", function(d) {return d[0].y;})
 			.attr("x2", function(d) {return d[1].x;})
 			.attr("y2", function(d) {return d[1].y;});
+			
+		svg.selectAll('line')
+			.data(diags)
+			.enter()
+			.append('line')
+			.style("stroke", "yellow")
+			.style("stroke-width", 2)
+			.attr("x1", function(d) {return d[0].x;})
+			.attr("y1", function(d) {return d[0].y;})
+			.attr("x2", function(d) {return d[1].x;})
+			.attr("y2", function(d) {return d[1].y;});
 	};
 	
 	
@@ -85,15 +83,39 @@
     .on("start", function(){
 		console.log("start")
 		let coords = d3.mouse(this);
-		update_canvas(coords);
+		let pt= {
+			x: Math.round( coords[0]),
+			y: Math.round( coords[1])
+		};
+		pts.push(pt);
+		
+		if (pts.length>1){
+			let edge = [pts[pts.length-1],pts[pts.length-2]];
+			edges.push(edge);
+		};
+		
+		update_canvas();
     })
     .on("drag", function () {
 		console.log("drag")
 		let coords = d3.mouse(this);
 		let delx = pts[pts.length-1].x - coords[0];
 		let dely = pts[pts.length-1].y - coords[1];
+		
 		if (delx*delx+dely*dely > radius*radius){
-			update_canvas(coords);
+			let pt= {
+				x: Math.round( coords[0]),
+				y: Math.round( coords[1])
+			};
+			pts.push(pt);
+			
+			
+			if (pts.length>1){
+				let edge = [pts[pts.length-1],pts[pts.length-2]];
+				edges.push(edge);
+			};
+			
+			update_canvas();
 		};	
 
     })
@@ -101,33 +123,39 @@
 		console.log("end");
 		// Input: A simple polygon with n vertices v0, v1, v2, ... , vn-1 stored in a list L. 
 		// Output: A set of n-3 diagonals that triangulate the polygon 
-		let array = pts.slice();
-		let diags = [];
-		while (array.length > 3){
+		let pt_array = pts.slice();
+		let edge_array = edges.slice();
+		edge_array.push([edges[edges.length-1], edges[0]]); // adds the last edge
+		
+		
+		while (pt_array.length > 3){
 	  
 			// TODO: Locate an ear vi-1, vi, vi+1
-      		for(let pt_idx = 0; pt_idx<array.length; pt_idx++){
+      		for(let pt_idx = 1; pt_idx<pt_array.length; pt_idx++){
           
 				if (pt_idx == 0){
-					// do nothing
-					//  or calculate the list of edges
-				}else if(pt_idx <array.length-1){
-					// check if a valid triangle
-					proposed_diag = [array[pt_idx-1], array[pt_idx+1]];
-
+					proposed_diag = [pt_array[pt_array.length-1], pt_array[1]];	
+				}else if(pt_idx == pt_array.length-1){                                
+					proposed_diag = [pt_array[pt_array.length-2], pt_array[0]];
+				}else{
+					proposed_diag = [pt_array[pt_idx-1], pt_array[pt_idx+1]];
+				};
+				console.log(proposed_diag);
+				
+				if(doesnt_intersect_any_edge(proposed_diag, edge_array)){
+					// TODO:  Add diagonal (vi-1, vi+1) to D
+					edges.push(proposed_diag);
 					
-					if(doesnt_intersect_any_edge(proposed_diag)){
-						// TODO:  Add diagonal (vi-1, vi+1) to D
-						edges.push(proposed_diag);
-						
-						// TODO: Remove vi from L.
-						array.splice(pt_idx, 1)
-						break;
-					};
+					// TODO: Remove vi from L.
+					pt_array.splice(pt_idx, 1)
+					
+					break;
 				};
 			};
 			
 		};
+		
+		update_canvas();
 
     });
 	
